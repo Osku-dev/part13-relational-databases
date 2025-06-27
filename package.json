@@ -1,0 +1,28 @@
+{
+  "dependencies": {
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "pg": "^8.16.2",
+    "sequelize": "^6.37.7"
+  },
+  "name": "part13-relational-databases",
+  "version": "1.0.0",
+  "main": "index.js",
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Osku-dev/part13-relational-databases.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Osku-dev/part13-relational-databases/issues"
+  },
+  "homepage": "https://github.com/Osku-dev/part13-relational-databases#readme",
+  "description": ""
+}
