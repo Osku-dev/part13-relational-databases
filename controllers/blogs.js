@@ -5,7 +5,13 @@ const blogFinder = require('../middleware/blogFinder')
 const tokenExtractor = require('../middleware/tokenExtractor')
 
 router.get('/', async (req, res) => {
-  const blogs = await Blog.findAll()
+  const blogs = await Blog.findAll(
+    {
+    include: {
+      model: User
+    }
+  }
+  )
   res.json(blogs)
 })
 
