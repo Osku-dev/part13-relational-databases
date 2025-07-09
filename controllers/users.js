@@ -28,4 +28,27 @@ router.put('/:username', async (req, res) => {
   }
 })
 
+router.get('/:id', async (req, res) => {
+  const user = await User.findOne({
+    where: { id: req.params.id },
+    include: [
+      {
+        model: Blog,
+        as: 'readings', 
+        attributes: ['id', 'url', 'title', 'author', 'likes', 'year'], 
+        through: {
+          attributes: [] 
+        }
+      }
+    ]
+  })
+
+  if (user) {
+    
+    res.json(user)
+  } else {
+    res.status(404).json({ error: 'User not found' })
+  }
+})
+
 module.exports = router
