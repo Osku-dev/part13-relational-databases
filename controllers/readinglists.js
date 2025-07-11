@@ -1,8 +1,9 @@
 const router = require('express').Router()
 const { ReadingList } = require('../models')
 const tokenExtractor = require('../middleware/tokenExtractor')
+const sessionValidator = require('../middleware/sessionValidator')
 
-router.put('/:id', tokenExtractor, async (req, res) => {
+router.put('/:id', tokenExtractor, sessionValidator, async (req, res) => {
   
   const { read } = req.body
   const userId = req.decodedToken.id
@@ -24,8 +25,12 @@ router.put('/:id', tokenExtractor, async (req, res) => {
 })
 
 
-router.post('/', async (req, res) => {
+router.post('/', tokenExtractor, sessionValidator, async (req, res) => {
   const { blogId, userId } = req.body
+
+  if (userId !== req.user.id) {
+    return res.status(403).json({ error: 'Cannot add to another user’s reading list' })
+  }
 
   const newEntry = await ReadingList.create({
     userId,

@@ -1,6 +1,8 @@
 const router = require('express').Router()
 const { User } = require('../models')
 const { Blog } = require('../models')
+const tokenExtractor = require('../middleware/tokenExtractor')
+const sessionValidator = require('../middleware/sessionValidator')
 
 router.get('/', async (req, res) => {
   const users = await User.findAll({
@@ -16,16 +18,20 @@ router.post('/', async (req, res) => {
   res.json(user)
 })
 
-router.put('/:username', async (req, res) => {
-  const user = await User.findOne({ where: { username: req.params.username } })
+router.put('/:username', tokenExtractor, sessionValidator, async (req, res) => {
+  const { username: paramUsername } = req.params
+  const { username: newUsername } = req.body
 
-  if (user) {
-    user.username = req.body.username || user.username
-    await user.save()
-    res.json(user)
-  } else {
-    res.status(404).json({ error: 'User not found' })
+  if (req.user.username !== paramUsername) {
+    return res.status(403).json({ error: 'You can only update your own username' })
   }
+
+  if (newUsername) {
+    req.user.username = newUsername
+    await req.user.save()
+  }
+
+  res.json(req.user)
 })
 
 router.get('/:id', async (req, res) => {

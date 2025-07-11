@@ -3,6 +3,7 @@ const { Blog } = require('../models')
 const { User } = require('../models')
 const blogFinder = require('../middleware/blogFinder')
 const tokenExtractor = require('../middleware/tokenExtractor')
+const sessionValidator = require('../middleware/sessionValidator')
 const { Op } = require('sequelize')
 
 router.get('/', async (req, res) => {
@@ -38,19 +39,18 @@ router.get('/:id', blogFinder, async (req, res) => {
   res.json(req.blog)
 })
 
-router.post('/', tokenExtractor, async (req, res) => {
-  const user = await User.findByPk(req.decodedToken.id)
-  const blog = await Blog.create({...req.body, userId: user.id})
+router.post('/', tokenExtractor, sessionValidator, async (req, res) => {
+  const blog = await Blog.create({...req.body, userId: req.user.id})
   res.status(201).json(blog)
 })
 
-router.put('/:id', blogFinder, async (req, res) => {
+router.put('/:id', blogFinder, tokenExtractor, sessionValidator, async (req, res) => {
   req.blog.likes = req.body.likes
   await req.blog.save()
   res.json(req.blog)
 })
 
-router.delete('/:id', tokenExtractor, blogFinder, async (req, res) => {
+router.delete('/:id', tokenExtractor, sessionValidator, blogFinder, async (req, res) => {
   const blog = req.blog
   const tokenUserId = req.decodedToken.id
 
